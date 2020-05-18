@@ -1,7 +1,6 @@
 package com.wan.core
 
 import com.wan.core.constant.SUCCESS_CODE
-import com.wan.core.constant.UNKNOWN_ERROR
 
 enum class State {
     LOADING,

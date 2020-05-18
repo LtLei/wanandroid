@@ -1,6 +1,11 @@
 package com.wan.core.network
 
 import androidx.collection.ArrayMap
+import com.franmontiel.persistentcookiejar.ClearableCookieJar
+import com.franmontiel.persistentcookiejar.PersistentCookieJar
+import com.franmontiel.persistentcookiejar.cache.SetCookieCache
+import com.franmontiel.persistentcookiejar.persistence.SharedPrefsCookiePersistor
+import com.wan.BaseInjection
 import com.wan.core.BuildConfig
 import com.wan.core.constant.BASE_URL
 import okhttp3.OkHttpClient
@@ -10,10 +15,18 @@ import retrofit2.converter.gson.GsonConverterFactory
 import timber.log.Timber
 import java.net.Proxy
 
+
 /**
  * the retrofit client.
  */
 class RetrofitClient private constructor() {
+    private val cookieJar: ClearableCookieJar by lazy {
+        PersistentCookieJar(
+            SetCookieCache(),
+            SharedPrefsCookiePersistor(BaseInjection.provideApp())
+        )
+    }
+
     private val okHttpClient: OkHttpClient by lazy {
         OkHttpClient.Builder()
             .apply {
@@ -30,6 +43,7 @@ class RetrofitClient private constructor() {
                     proxy(Proxy.NO_PROXY)
                 }
             }
+            .cookieJar(cookieJar)
             .build()
     }
 
@@ -54,11 +68,15 @@ class RetrofitClient private constructor() {
         return service
     }
 
+    fun clearCookie(){
+        cookieJar.clear()
+    }
+
     companion object {
         @Volatile
         private var instance: RetrofitClient? = null
 
-        fun getInstance(): RetrofitClient {
+        internal fun getInstance(): RetrofitClient {
             return instance ?: synchronized(RetrofitClient::class.java) {
                 instance ?: RetrofitClient().also {
                     instance = it

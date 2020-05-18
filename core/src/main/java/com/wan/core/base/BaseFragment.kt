@@ -7,7 +7,6 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.annotation.LayoutRes
 import androidx.fragment.app.Fragment
-import com.wan.core.extensions.autoCleared
 import com.wan.core.view.loading.LoadingLayout
 
 /**
@@ -15,7 +14,7 @@ import com.wan.core.view.loading.LoadingLayout
  *
  * 我们希望这是唯一不合理的部分。
  *
- * 默认实现了 [LoadingStateView] 和 [LoadingDialogView]，你可以单纯用于方法调用，也可以用于MVP中的V，就像 [BaseView] 那样。
+ * 默认实现了 [LoadingStateView] 和 [LoadingDialogView]，你可以单纯用于方法调用，也可以用于 MVP 中的 V，就像 [BaseView] 那样。
  *
  * @param layoutId the layout id for [onCreateView]
  * @param withLoadingLayout 是否启用 [LoadingLayout]
@@ -30,14 +29,13 @@ abstract class BaseFragment constructor(
 
     protected open fun retry() {}
 
-    private var mLoadingLayout: LoadingLayout? by autoCleared()
+    protected var mLoadingLayout: LoadingLayout? = null
 
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
-
         val inflatedView = inflater.inflate(layoutId, container, false)
         return if (withLoadingLayout) {
             mLoadingLayout = LoadingLayout(requireContext())
@@ -49,6 +47,11 @@ abstract class BaseFragment constructor(
         } else {
             inflatedView
         }
+    }
+
+    override fun onDestroyView() {
+        mLoadingLayout = null
+        super.onDestroyView()
     }
 
     override fun showLoading() {

@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical">
+
+    <TextView
+        android:id="@+id/tv_about"
+        style="@style/OneLineTextStyle"
+        android:layout_marginTop="8dp"
+        android:drawableStart="@drawable/ic_about"
+        android:text="@string/settings_about"
+        tools:ignore="UnusedAttribute" />
+
+    <Button
+        android:id="@+id/btn_logout"
+        android:layout_width="match_parent"
+        android:layout_height="44dp"
+        android:layout_marginStart="32dp"
+        android:layout_marginTop="32dp"
+        android:layout_marginEnd="32dp"
+        android:background="@drawable/selector_login_out_button"
+        android:enabled="false"
+        android:text="@string/action_logout"
+        android:textColor="@color/selector_login_out_button_text"
+        tools:enabled="true" />
+</LinearLayout>

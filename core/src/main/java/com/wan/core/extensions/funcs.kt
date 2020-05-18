@@ -1,12 +1,16 @@
 package com.wan.core.extensions
 
 import android.net.ParseException
+import androidx.room.RoomDatabase
 import com.google.gson.JsonParseException
 import com.wan.core.Resource
 import com.wan.core.constant.*
 import com.wan.core.network.ApiResponse
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.withContext
 import org.json.JSONException
 import retrofit2.HttpException
+import timber.log.Timber
 import java.io.InterruptedIOException
 import java.net.ConnectException
 import java.net.UnknownHostException
@@ -46,6 +50,35 @@ inline fun <R> safeCall(block: () -> Resource<R>): Resource<R> {
     return try {
         block()
     } catch (e: Throwable) {
+        Timber.e(e, "safeCall error!")
         e.toResource()
+    }
+}
+
+/**
+ * for ViewModelProvider.Factory
+ */
+inline fun <T> requireClassIsT(
+    modelClass: Class<T>,
+    clazz: Class<*>,
+    block: () -> T
+): T {
+    if (!modelClass.isAssignableFrom(clazz)) {
+        throw IllegalArgumentException("not a ${clazz}.")
+    }
+    return block()
+}
+
+
+@Suppress("DEPRECATION")
+suspend fun <T> RoomDatabase.suspendRunInTransaction(block: suspend () -> T) {
+    withContext(Dispatchers.IO) {
+        beginTransaction()
+        try {
+            block()
+            setTransactionSuccessful()
+        } finally {
+            endTransaction()
+        }
     }
 }
