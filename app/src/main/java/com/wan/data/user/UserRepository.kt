@@ -5,6 +5,7 @@ import com.wan.bus.LogInOutBus
 import com.wan.core.Resource
 import com.wan.core.base.BaseRepository
 import com.wan.core.event.Event
+import com.wan.core.network.MySerializableAny
 import com.wan.db.UserDao
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.launch
@@ -24,7 +25,7 @@ interface UserRepository {
     suspend fun login(username: String, password: String)
 
     /* 登出 */
-    val logout: LiveData<Event<Resource<Nothing>>>
+    val logout: LiveData<Event<Resource<MySerializableAny>>>
 
     suspend fun logout()
 
@@ -85,7 +86,7 @@ class UserRepositoryImpl private constructor(
         loginDelegate.onFormChange(username, password)
     }
 
-    override val logout: LiveData<Event<Resource<Nothing>>>
+    override val logout: LiveData<Event<Resource<MySerializableAny>>>
         get() = logoutDelegate.logout
 
     override suspend fun logout() {

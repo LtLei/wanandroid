@@ -8,6 +8,7 @@ import com.wan.bus.LogInOutBus
 import com.wan.core.Resource
 import com.wan.core.event.Event
 import com.wan.core.extensions.safeCall
+import com.wan.core.network.MySerializableAny
 import com.wan.db.UserDao
 import org.greenrobot.eventbus.EventBus
 
@@ -18,9 +19,9 @@ internal class LogoutDelegate(
     private val userDao: UserDao,
     private val userService: UserService
 ) {
-    private val _logout = MutableLiveData<Resource<Nothing>>()
+    private val _logout = MutableLiveData<Resource<MySerializableAny>>()
 
-    val logout: LiveData<Event<Resource<Nothing>>> = _logout.map { Event(it) }
+    val logout: LiveData<Event<Resource<MySerializableAny>>> = _logout.map { Event(it) }
 
     suspend fun logout() {
         _logout.value = Resource.loading()

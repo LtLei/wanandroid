@@ -1,6 +1,7 @@
 package com.wan.data.articles
 
 import com.wan.core.network.ApiResponse
+import com.wan.core.network.MySerializableAny
 import retrofit2.http.*
 
 /**
@@ -16,12 +17,12 @@ interface ArticlesService {
     @POST("lg/collect/{articleId}/json")
     suspend fun collectArticle(
         @Path("articleId") articleId: Int
-    ): ApiResponse<Nothing>
+    ): ApiResponse<MySerializableAny>
 
     @POST("lg/uncollect_originId/{articleId}/json")
     suspend fun unCollectArticle(
         @Path("articleId") articleId: Int
-    ): ApiResponse<Nothing>
+    ): ApiResponse<MySerializableAny>
 
     @GET("lg/collect/list/{page}/json")
     suspend fun getCollectArticlesByPage(

@@ -4,7 +4,8 @@ import androidx.room.Entity
 import androidx.room.Ignore
 import com.chad.library.adapter.base.entity.node.BaseExpandNode
 import com.chad.library.adapter.base.entity.node.BaseNode
-import com.google.gson.annotations.SerializedName
+import kotlinx.serialization.SerialName
+import kotlinx.serialization.Serializable
 
 /**
  * ClassifyModel是一个嵌套结构。
@@ -12,15 +13,16 @@ import com.google.gson.annotations.SerializedName
  * 只有根据二级分类的 id 才可以查找文章
  */
 @Entity(primaryKeys = ["classifyId"])
+@Serializable
 data class ClassifyModel(
-    @SerializedName("id")
+    @SerialName("id")
     val classifyId: Int,
     val name: String,
     val courseId: Int,
     val parentChapterId: Int,
     @Ignore
-    @SerializedName("children")
-    var classifies: List<ClassifyModel>?
+    @SerialName("children")
+    var classifies: List<ClassifyModel>?=null
 ) {
     /* for room only. */
     constructor(

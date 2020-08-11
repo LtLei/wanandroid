@@ -2,12 +2,13 @@ package com.wan.core.extensions
 
 import android.net.ParseException
 import androidx.room.RoomDatabase
-import com.google.gson.JsonParseException
 import com.wan.core.Resource
 import com.wan.core.constant.*
 import com.wan.core.network.ApiResponse
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
+import kotlinx.serialization.json.JsonDecodingException
+import kotlinx.serialization.json.JsonException
 import org.json.JSONException
 import retrofit2.HttpException
 import timber.log.Timber
@@ -27,7 +28,7 @@ fun <T> Throwable.toResource(): Resource<T> {
 
         is InterruptedIOException -> Resource.error(CONNECT_TIMEOUT_CODE, CONNECT_TIMEOUT)
 
-        is JsonParseException, is JSONException, is ParseException ->
+        is JsonDecodingException, is JSONException, is ParseException ->
             Resource.error(DATA_ERROR_CODE, DATA_ERROR)
 
         else -> Resource.error(UNKNOWN_ERROR_CODE, UNKNOWN_ERROR)

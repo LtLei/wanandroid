@@ -1,6 +1,7 @@
 package com.wan.core.network
 
 import com.wan.core.constant.SUCCESS_CODE
+import kotlinx.serialization.Serializable
 
 /**
  * 服务端返回数据的格式.
@@ -11,10 +12,11 @@ import com.wan.core.constant.SUCCESS_CODE
  *
  * @see [com.wan.core.Resource]
  */
+@Serializable
 data class ApiResponse<T>(
-    val errorCode: Int,
-    val errorMsg: String?,
-    val data: T?
+    val errorCode: Int = SUCCESS_CODE,
+    val errorMsg: String? = null,
+    val data: T? = null
 ) {
     fun isSuccess(): Boolean {
         return errorCode == SUCCESS_CODE
