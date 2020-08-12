@@ -7,6 +7,16 @@
 
 1.1 版本将介绍单元测试与UI测试的作用，敬请期待~
 
+## v1.0.1
+
+根据：[使用Gson解析data class引发的一点思考](https://github.com/LtLei/articles/blob/master/android/the_relearning_of_android/%E4%BD%BF%E7%94%A8Gson%E8%A7%A3%E6%9E%90data-class%E5%BC%95%E5%8F%91%E7%9A%84%E4%B8%80%E7%82%B9%E6%80%9D%E8%80%83.md)，为了确保kotlin null safe，对所有的bean作了如下处理：
+
+- 使用[kotlinx.serialization](https://github.com/Kotlin/kotlinx.serialization)进行序列化
+
+- 使用[retrofit2-kotlinx-serialization-converter](https://github.com/JakeWharton/retrofit2-kotlinx-serialization-converter)代替现有的GsonConverter
+
+- 所有 bean 中 nullable 字段赋值默认值 null
+
 ## v1.0
 
 1.0 版本包含了以下内容：
