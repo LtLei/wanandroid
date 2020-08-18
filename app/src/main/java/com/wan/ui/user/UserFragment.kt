@@ -4,7 +4,6 @@ import android.app.Activity
 import android.content.Intent
 import android.os.Bundle
 import android.widget.Toast
-import androidx.fragment.app.viewModels
 import androidx.lifecycle.Observer
 import androidx.lifecycle.lifecycleScope
 import com.bumptech.glide.Glide
@@ -19,14 +18,6 @@ import com.wan.ui.settings.SettingsActivity
 import kotlinx.android.synthetic.main.user_fragment.*
 
 class UserFragment : BaseFragment(R.layout.user_fragment, false) {
-    private val userViewModelFactory by lazy {
-        UserViewModelFactory()
-    }
-
-    private val userViewModel: UserViewModel by viewModels {
-        userViewModelFactory
-    }
-
     override fun onActivityCreated(savedInstanceState: Bundle?) {
         super.onActivityCreated(savedInstanceState)
 
@@ -35,7 +26,7 @@ class UserFragment : BaseFragment(R.layout.user_fragment, false) {
         }
 
         tv_articles.setOnClickListener {
-            if (!UserManager.isLogin()) {
+            if (!UserManager.getInstance().isLogin()) {
                 // login
                 startActivityForResult(
                     Intent(context, LoginActivity::class.java),
@@ -48,7 +39,7 @@ class UserFragment : BaseFragment(R.layout.user_fragment, false) {
         }
 
         tv_collect.setOnClickListener {
-            if (!UserManager.isLogin()) {
+            if (!UserManager.getInstance().isLogin()) {
                 // login
                 startActivityForResult(
                     Intent(context, LoginActivity::class.java),
@@ -66,7 +57,7 @@ class UserFragment : BaseFragment(R.layout.user_fragment, false) {
         }
 
         lifecycleScope.launchWhenResumed {
-            userViewModel.user.observe(viewLifecycleOwner, Observer {
+            UserManager.getInstance().getUserLiveData().observe(viewLifecycleOwner, Observer {
                 if (it == null) {
                     // not login.
                     iv_avatar.setImageResource(R.mipmap.img_default_avatar)
@@ -94,7 +85,7 @@ class UserFragment : BaseFragment(R.layout.user_fragment, false) {
     }
 
     private fun openMyArticlesActivity() {
-        UserManager.getUser()?.nickname?.let {
+        UserManager.getInstance().getUser()?.nickname?.let {
             ArticlesActivity.open(
                 requireContext(),
                 ArticlesActivity.TYPE_AUTHOR,

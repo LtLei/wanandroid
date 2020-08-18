@@ -4,7 +4,6 @@ import android.os.Bundle
 import android.view.View
 import androidx.core.content.ContextCompat
 import androidx.fragment.app.viewModels
-import androidx.lifecycle.Observer
 import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.DividerItemDecoration
 import androidx.recyclerview.widget.LinearLayoutManager
@@ -15,14 +14,15 @@ import com.wan.core.base.BaseFragment
 import com.wan.core.extensions.autoCleared
 import com.wan.data.classify.ClassifyFirstNode
 import kotlinx.android.synthetic.main.classify_fragment.*
+import kotlinx.coroutines.launch
 
 class ClassifyFragment : BaseFragment(R.layout.classify_fragment, false) {
-    private var initialized = false
-
     private val factory by lazy { ClassifyViewModelFactory() }
     private val viewModel by viewModels<ClassifyViewModel> {
         factory
     }
+
+    private var hasInitialized = false
 
     private var mClassifyRecyclerAdapter by autoCleared<ClassifyRecyclerAdapter>()
 
@@ -52,7 +52,9 @@ class ClassifyFragment : BaseFragment(R.layout.classify_fragment, false) {
 
         loading.setContentView(contentView)
         loading.setRetryAction {
-            viewModel.getClassifies(true)
+            lifecycleScope.launch {
+                viewModel.retry()
+            }
         }
         mLoadingLayout = loading
     }
@@ -61,7 +63,7 @@ class ClassifyFragment : BaseFragment(R.layout.classify_fragment, false) {
         super.onActivityCreated(savedInstanceState)
 
         lifecycleScope.launchWhenResumed {
-            viewModel.classifies.observe(viewLifecycleOwner, Observer { res ->
+            viewModel.classifies.observe(viewLifecycleOwner, { res ->
                 when (res.state) {
                     State.LOADING -> {
                         showLoading()
@@ -91,9 +93,9 @@ class ClassifyFragment : BaseFragment(R.layout.classify_fragment, false) {
 
     override fun onResume() {
         super.onResume()
-        if (!initialized) {
-            initialized = true
-            viewModel.getClassifies(false)
+        if (!hasInitialized) {
+            viewModel.getClassifies()
+            hasInitialized = true
         }
     }
 }

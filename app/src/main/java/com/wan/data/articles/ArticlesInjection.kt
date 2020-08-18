@@ -4,7 +4,7 @@ import com.wan.BaseInjection
 
 object ArticlesInjection {
     fun provideArticlesRepository(): ArticlesRepository {
-        return ArticlesRepositoryImpl(provideArticlesService())
+        return DefaultArticlesRepository(provideArticlesService())
     }
 
     private fun provideArticlesService(): ArticlesService {

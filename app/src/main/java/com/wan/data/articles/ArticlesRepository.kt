@@ -1,44 +1,39 @@
 package com.wan.data.articles
 
-import androidx.lifecycle.LiveData
 import com.wan.core.Resource
 import com.wan.core.base.BaseRepository
 import com.wan.core.event.Event
+import com.wan.core.extensions.copyTo
+import com.wan.core.extensions.safeCall
+import com.wan.core.extensions.toResource
 
 /**
  * 加载文章列表
  */
 interface ArticlesRepository {
-    val collectStatus: LiveData<Event<Resource<CollectStatus>>>
+    /* @param position 文章在列表中的位置，以方便更新UI */
+    suspend fun collectArticle(articleId: Int, position: Int): Event<Resource<CollectStatus>>
 
     /* @param position 文章在列表中的位置，以方便更新UI */
-    suspend fun collectArticle(articleId: Int, position: Int)
+    suspend fun unCollectArticle(articleId: Int, position: Int): Event<Resource<CollectStatus>>
 
-    /* @param position 文章在列表中的位置，以方便更新UI */
-    suspend fun unCollectArticle(articleId: Int, position: Int)
+    suspend fun refreshCollectArticles(): Resource<ArticlesResult>
+    suspend fun loadMoreCollectArticles(): Resource<ArticlesResult>
 
-    val collectArticles: LiveData<Resource<ArticlesResult>>
-    suspend fun refreshCollectArticles()
-    suspend fun loadMoreCollectArticles()
+    suspend fun refreshHomeArticles(): Resource<ArticlesResult>
+    suspend fun loadMoreHomeArticles(): Resource<ArticlesResult>
 
-    val homeArticles: LiveData<Resource<ArticlesResult>>
-    suspend fun refreshHomeArticles()
-    suspend fun loadMoreHomeArticles()
+    suspend fun refreshAuthorArticles(author: String): Resource<ArticlesResult>
+    suspend fun loadMoreAuthorArticles(author: String): Resource<ArticlesResult>
 
-    val authorArticles: LiveData<Resource<ArticlesResult>>
-    suspend fun refreshAuthorArticles(author: String)
-    suspend fun loadMoreAuthorArticles(author: String)
+    suspend fun refreshClassifyArticles(classifyId: Int): Resource<ArticlesResult>
+    suspend fun loadMoreClassifyArticles(classifyId: Int): Resource<ArticlesResult>
 
-    val classifyArticles: LiveData<Resource<ArticlesResult>>
-    suspend fun refreshClassifyArticles(classifyId: Int)
-    suspend fun loadMoreClassifyArticles(classifyId: Int)
-
-    val keywordArticles: LiveData<Resource<ArticlesResult>>
-    suspend fun refreshKeywordArticles(keyword: String)
-    suspend fun loadMoreKeywordArticles(keyword: String)
+    suspend fun refreshKeywordArticles(keyword: String): Resource<ArticlesResult>
+    suspend fun loadMoreKeywordArticles(keyword: String): Resource<ArticlesResult>
 }
 
-class ArticlesRepositoryImpl(private val articlesService: ArticlesService) : BaseRepository(),
+class DefaultArticlesRepository(private val articlesService: ArticlesService) : BaseRepository(),
     ArticlesRepository {
 
     private val collectArticlesDelegate by lazy {
@@ -61,75 +56,78 @@ class ArticlesRepositoryImpl(private val articlesService: ArticlesService) : Bas
         KeywordArticlesDelegate(articlesService)
     }
 
-    override val collectStatus: LiveData<Event<Resource<CollectStatus>>>
-        get() = collectArticlesDelegate.collectStatus
+    override suspend fun collectArticle(
+        articleId: Int,
+        position: Int
+    ): Event<Resource<CollectStatus>> {
+        val resource = safeCall {
+            val response = articlesService.collectArticle(articleId)
+            response.toResource {
+                Resource.success(it.data)
+            }
+        }
 
-    override suspend fun collectArticle(articleId: Int, position: Int) {
-        collectArticlesDelegate.collectArticle(articleId, position)
+        return Event(resource.copyTo { CollectStatus(true, position) })
     }
 
-    override suspend fun unCollectArticle(articleId: Int, position: Int) {
-        collectArticlesDelegate.unCollectArticle(articleId, position)
+    override suspend fun unCollectArticle(
+        articleId: Int,
+        position: Int
+    ): Event<Resource<CollectStatus>> {
+        val resource = safeCall {
+            val response = articlesService.unCollectArticle(articleId)
+            response.toResource {
+                Resource.success(it.data)
+            }
+        }
+        return Event(resource.copyTo { CollectStatus(false, position) })
     }
 
-    override val collectArticles: LiveData<Resource<ArticlesResult>>
-        get() = collectArticlesDelegate.articlesResult
 
-    override suspend fun refreshCollectArticles() {
-        collectArticlesDelegate.refresh()
+    override suspend fun refreshCollectArticles(): Resource<ArticlesResult> {
+        return collectArticlesDelegate.refresh()
     }
 
-    override suspend fun loadMoreCollectArticles() {
-        collectArticlesDelegate.loadMore()
+    override suspend fun loadMoreCollectArticles(): Resource<ArticlesResult> {
+        return collectArticlesDelegate.loadMore()
     }
 
-    override val homeArticles: LiveData<Resource<ArticlesResult>>
-        get() = homeArticlesDelegate.articlesResult
-
-    override suspend fun refreshHomeArticles() {
-        homeArticlesDelegate.refresh()
+    override suspend fun refreshHomeArticles(): Resource<ArticlesResult> {
+        return homeArticlesDelegate.refresh()
     }
 
-    override suspend fun loadMoreHomeArticles() {
-        homeArticlesDelegate.loadMore()
+    override suspend fun loadMoreHomeArticles(): Resource<ArticlesResult> {
+        return homeArticlesDelegate.loadMore()
     }
 
-    override val authorArticles: LiveData<Resource<ArticlesResult>>
-        get() = authorArticlesDelegate.articlesResult
-
-    override suspend fun refreshAuthorArticles(author: String) {
+    override suspend fun refreshAuthorArticles(author: String): Resource<ArticlesResult> {
         authorArticlesDelegate.author = author
-        authorArticlesDelegate.refresh()
+        return authorArticlesDelegate.refresh()
     }
 
-    override suspend fun loadMoreAuthorArticles(author: String) {
+    override suspend fun loadMoreAuthorArticles(author: String): Resource<ArticlesResult> {
         authorArticlesDelegate.author = author
-        authorArticlesDelegate.loadMore()
+        return authorArticlesDelegate.loadMore()
     }
 
-    override val classifyArticles: LiveData<Resource<ArticlesResult>>
-        get() = classifyArticlesDelegate.articlesResult
-
-    override suspend fun refreshClassifyArticles(classifyId: Int) {
+    override suspend fun refreshClassifyArticles(classifyId: Int): Resource<ArticlesResult> {
         classifyArticlesDelegate.classifyId = classifyId
-        classifyArticlesDelegate.refresh()
+        return classifyArticlesDelegate.refresh()
     }
 
-    override suspend fun loadMoreClassifyArticles(classifyId: Int) {
+    override suspend fun loadMoreClassifyArticles(classifyId: Int): Resource<ArticlesResult> {
         classifyArticlesDelegate.classifyId = classifyId
-        classifyArticlesDelegate.loadMore()
+        return classifyArticlesDelegate.loadMore()
     }
 
-    override val keywordArticles: LiveData<Resource<ArticlesResult>>
-        get() = keywordArticlesDelegate.articlesResult
 
-    override suspend fun refreshKeywordArticles(keyword: String) {
+    override suspend fun refreshKeywordArticles(keyword: String): Resource<ArticlesResult> {
         keywordArticlesDelegate.keyword = keyword
-        keywordArticlesDelegate.refresh()
+        return keywordArticlesDelegate.refresh()
     }
 
-    override suspend fun loadMoreKeywordArticles(keyword: String) {
+    override suspend fun loadMoreKeywordArticles(keyword: String): Resource<ArticlesResult> {
         keywordArticlesDelegate.keyword = keyword
-        keywordArticlesDelegate.loadMore()
+        return keywordArticlesDelegate.loadMore()
     }
 }

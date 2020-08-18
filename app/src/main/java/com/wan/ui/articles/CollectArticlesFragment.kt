@@ -2,17 +2,14 @@ package com.wan.ui.articles
 
 import android.os.Bundle
 import androidx.fragment.app.viewModels
-import androidx.lifecycle.LiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
-import androidx.lifecycle.viewModelScope
 import com.wan.R
 import com.wan.core.Resource
 import com.wan.core.extensions.requireClassIsT
 import com.wan.data.articles.ArticlesInjection
 import com.wan.data.articles.ArticlesRepository
 import com.wan.data.articles.ArticlesResult
-import kotlinx.coroutines.launch
 
 class CollectArticlesFragment : AbsArticlesFragment<CollectArticlesViewModel>() {
     override val viewModel: CollectArticlesViewModel by viewModels {
@@ -42,19 +39,13 @@ class CollectArticlesFragment : AbsArticlesFragment<CollectArticlesViewModel>() 
 class CollectArticlesViewModel(
     private val articlesRepository: ArticlesRepository
 ) : AbsArticlesViewModel(articlesRepository) {
-    override val articles: LiveData<Resource<ArticlesResult>>
-        get() = articlesRepository.collectArticles
 
-    override fun refresh() {
-        viewModelScope.launch {
-            articlesRepository.refreshCollectArticles()
-        }
+    override suspend fun refresh(): Resource<ArticlesResult> {
+        return articlesRepository.refreshCollectArticles()
     }
 
-    override fun loadMore() {
-        viewModelScope.launch {
-            articlesRepository.loadMoreCollectArticles()
-        }
+    override suspend fun _loadMore(): Resource<ArticlesResult> {
+        return articlesRepository.loadMoreCollectArticles()
     }
 }
 

@@ -26,19 +26,14 @@ class HomeDetailFragment : AbsArticlesFragment<HomeViewModel>() {
 
 class HomeViewModel(private val articlesRepository: ArticlesRepository) :
     AbsArticlesViewModel(articlesRepository) {
-    override val articles: LiveData<Resource<ArticlesResult>>
-        get() = articlesRepository.homeArticles
 
-    override fun refresh() {
-        viewModelScope.launch {
-            articlesRepository.refreshHomeArticles()
-        }
+
+    override suspend fun refresh(): Resource<ArticlesResult> {
+            return articlesRepository.refreshHomeArticles()
     }
 
-    override fun loadMore() {
-        viewModelScope.launch {
-            articlesRepository.loadMoreHomeArticles()
-        }
+    override suspend fun _loadMore(): Resource<ArticlesResult> {
+        return articlesRepository.loadMoreHomeArticles()
     }
 }
 

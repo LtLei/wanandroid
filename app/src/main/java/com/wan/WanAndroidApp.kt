@@ -1,7 +1,7 @@
 package com.wan
 
 import android.app.Application
-import com.wan.data.user.UserInjection
+import com.wan.data.user.UserManager
 import timber.log.Timber
 
 class WanAndroidApp : Application() {
@@ -13,7 +13,7 @@ class WanAndroidApp : Application() {
             Timber.plant(Timber.DebugTree())
         }
 
-        // 确保UserRepository初始化完成
-        UserInjection.provideUserRepository()
+        // 确保UserManager初始化完成
+        UserManager.getInstance()
     }
 }

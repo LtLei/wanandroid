@@ -1,21 +1,29 @@
 package com.wan.ui.classify
 
 import androidx.lifecycle.LiveData
-import androidx.lifecycle.viewModelScope
+import androidx.lifecycle.MutableLiveData
+import androidx.lifecycle.liveData
+import androidx.lifecycle.switchMap
 import com.wan.core.Resource
 import com.wan.core.base.BaseViewModel
 import com.wan.data.classify.ClassifyModel
 import com.wan.data.classify.ClassifyRepository
-import kotlinx.coroutines.launch
 
 class ClassifyViewModel(private val classifyRepository: ClassifyRepository) : BaseViewModel() {
-    val classifies: LiveData<Resource<List<ClassifyModel>>> = classifyRepository.classifies
-
-    fun getClassifies(forceUpdate: Boolean) {
-        viewModelScope.launch {
-            if (forceUpdate || classifies.value == null) {
-                classifyRepository.getClassifies(forceUpdate)
+    private val _forceUpdate = MutableLiveData<Boolean>()
+    val classifies: LiveData<Resource<List<ClassifyModel>>> =
+        _forceUpdate.switchMap {
+            liveData {
+                emit(Resource.loading())
+                emitSource(classifyRepository.getClassifies(it))
             }
         }
+
+    fun getClassifies() {
+        _forceUpdate.value = false
+    }
+
+    fun retry() {
+        _forceUpdate.value = true
     }
 }

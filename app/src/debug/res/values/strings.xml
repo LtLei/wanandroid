@@ -1,0 +1,5 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="text_login">登录</string>
+    <string name="text_login_success">fetched fake data.</string>
+</resources>

@@ -89,7 +89,7 @@ internal class KeywordArticlesDelegate(private val articlesService: ArticlesServ
     override suspend fun getArticles(page: Int): Resource<ArticlesModel> {
         return searchRunner.cancelPreviousThenRun {
             safeCall {
-                val response = articlesService.getArticlesByAuthor(page, keyword)
+                val response = articlesService.getArticlesByKeyword(page, keyword)
                 convertArticlesModel(response)
             }
         }

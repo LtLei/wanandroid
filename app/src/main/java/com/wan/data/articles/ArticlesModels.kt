@@ -33,7 +33,7 @@ data class ArticlesModel(
 data class Article(
     val id: Int,
     val title: String,
-    val desc: String?=null,
+    val desc: String? = null,
     val link: String,
     val chapterId: Int,
     val chapterName: String? = null,

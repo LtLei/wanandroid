@@ -1,7 +1,5 @@
 package com.wan.data.articles
 
-import androidx.lifecycle.LiveData
-import androidx.lifecycle.MutableLiveData
 import com.wan.core.Resource
 import com.wan.core.State
 import com.wan.core.extensions.copyTo
@@ -14,24 +12,17 @@ internal abstract class AbsArticlesDelegate {
     private var _page: Int = 0
     private val _articles = arrayListOf<Article>()
 
-    private val _articlesResult = MutableLiveData<Resource<ArticlesResult>>()
-
-    val articlesResult: LiveData<Resource<ArticlesResult>> = _articlesResult
-
-    suspend fun refresh() {
+    suspend fun refresh(): Resource<ArticlesResult> {
         _page = 0
         _articles.clear()
-        getArticlesByPage(true)
+        return getArticlesByPage(true)
     }
 
-    suspend fun loadMore() {
-        getArticlesByPage(false)
+    suspend fun loadMore(): Resource<ArticlesResult> {
+        return getArticlesByPage(false)
     }
 
-    private suspend fun getArticlesByPage(refresh: Boolean) {
-        if (refresh) {
-            _articlesResult.value = Resource.loading()
-        }
+    private suspend fun getArticlesByPage(refresh: Boolean): Resource<ArticlesResult> {
         val resource = getArticles(_page)
 
         val hasMore = resource.data?.over?.not() ?: false
@@ -41,8 +32,8 @@ internal abstract class AbsArticlesDelegate {
         if (resource.state == State.SUCCESS) {
             ++_page
         }
-        _articlesResult.value =
-            resource.copyTo { ArticlesResult(refresh, hasMore, _articles.toMutableList()) }
+
+        return resource.copyTo { ArticlesResult(refresh, hasMore, _articles.toMutableList()) }
     }
 
     protected fun convertArticlesModel(response: ApiResponse<ArticlesModel>): Resource<ArticlesModel> {

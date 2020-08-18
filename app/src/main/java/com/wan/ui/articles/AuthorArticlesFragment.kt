@@ -2,17 +2,14 @@ package com.wan.ui.articles
 
 import android.os.Bundle
 import androidx.fragment.app.viewModels
-import androidx.lifecycle.LiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
-import androidx.lifecycle.viewModelScope
 import com.wan.R
 import com.wan.core.Resource
 import com.wan.core.extensions.requireClassIsT
 import com.wan.data.articles.ArticlesInjection
 import com.wan.data.articles.ArticlesRepository
 import com.wan.data.articles.ArticlesResult
-import kotlinx.coroutines.launch
 import kotlin.properties.Delegates
 
 class AuthorArticlesFragment : AbsArticlesFragment<AuthorArticlesViewModel>() {
@@ -51,19 +48,13 @@ class AuthorArticlesViewModel(
 ) : AbsArticlesViewModel(articlesRepository) {
     var author: String by Delegates.notNull()
 
-    override val articles: LiveData<Resource<ArticlesResult>>
-        get() = articlesRepository.authorArticles
 
-    override fun refresh() {
-        viewModelScope.launch {
-            articlesRepository.refreshAuthorArticles(author)
-        }
+    override suspend fun refresh(): Resource<ArticlesResult> {
+        return articlesRepository.refreshAuthorArticles(author)
     }
 
-    override fun loadMore() {
-        viewModelScope.launch {
-            articlesRepository.loadMoreAuthorArticles(author)
-        }
+    override suspend fun _loadMore(): Resource<ArticlesResult> {
+        return articlesRepository.loadMoreAuthorArticles(author)
     }
 }
 

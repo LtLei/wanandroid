@@ -2,16 +2,13 @@ package com.wan.ui.articles
 
 import android.os.Bundle
 import androidx.fragment.app.viewModels
-import androidx.lifecycle.LiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
-import androidx.lifecycle.viewModelScope
 import com.wan.core.Resource
 import com.wan.core.extensions.requireClassIsT
 import com.wan.data.articles.ArticlesInjection
 import com.wan.data.articles.ArticlesRepository
 import com.wan.data.articles.ArticlesResult
-import kotlinx.coroutines.launch
 import kotlin.properties.Delegates
 
 class ClassifyArticlesFragment : AbsArticlesFragment<ClassifyArticlesViewModel>() {
@@ -54,19 +51,12 @@ class ClassifyArticlesViewModel(
 ) : AbsArticlesViewModel(articlesRepository) {
     var classifyId by Delegates.notNull<Int>()
 
-    override val articles: LiveData<Resource<ArticlesResult>>
-        get() = articlesRepository.classifyArticles
-
-    override fun refresh() {
-        viewModelScope.launch {
-            articlesRepository.refreshClassifyArticles(classifyId)
-        }
+    override suspend fun refresh(): Resource<ArticlesResult> {
+        return articlesRepository.refreshClassifyArticles(classifyId)
     }
 
-    override fun loadMore() {
-        viewModelScope.launch {
-            articlesRepository.loadMoreClassifyArticles(classifyId)
-        }
+    override suspend fun _loadMore(): Resource<ArticlesResult> {
+        return articlesRepository.loadMoreClassifyArticles(classifyId)
     }
 }
 

@@ -169,6 +169,7 @@ class LoadingDialogFragment : DialogFragment() {
             get(manager)?.dismiss()
             // 不被FragmentManager管理
             if (currentFragment != get(manager)) {
+                currentFragment?.dismiss()
                 // 清除delay
                 resetCurrentFragment()
             }

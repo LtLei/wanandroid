@@ -16,7 +16,7 @@ interface UserDao {
      * 只获取唯一一条用户数据
      */
     @Query("SELECT * FROM user LIMIT 1")
-    fun getUser(): User
+    suspend fun getUser(): User?
 
     /**
      * 只获取唯一一条用户数据

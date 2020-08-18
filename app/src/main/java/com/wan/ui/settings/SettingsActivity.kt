@@ -1,16 +1,15 @@
 package com.wan.ui.settings
 
-import android.content.DialogInterface
 import android.os.Bundle
 import android.widget.Toast
 import androidx.activity.viewModels
-import androidx.lifecycle.Observer
 import com.wan.R
 import com.wan.WebViewActivity
 import com.wan.core.State
 import com.wan.core.base.BaseActivity
 import com.wan.core.base.LoadingDialogFragment
 import com.wan.core.event.EventObserver
+import com.wan.data.user.UserManager
 import kotlinx.android.synthetic.main.settings_activity.*
 
 class SettingsActivity : BaseActivity() {
@@ -31,7 +30,7 @@ class SettingsActivity : BaseActivity() {
             )
         }
 
-        viewModel.user.observe(this, Observer {
+        UserManager.getInstance().getUserLiveData().observe(this, {
             btn_logout.isEnabled = it != null
             if (it != null) {
                 btn_logout.setOnClickListener {
@@ -42,8 +41,9 @@ class SettingsActivity : BaseActivity() {
 
         viewModel.logout.observe(this, EventObserver {
             if (it.state == State.LOADING) {
-                LoadingDialogFragment.show(supportFragmentManager, true,
-                    DialogInterface.OnCancelListener { viewModel.cancelLogout() })
+                LoadingDialogFragment.show(
+                    supportFragmentManager, true
+                ) { viewModel.cancelLogout() }
             } else {
                 LoadingDialogFragment.hide(supportFragmentManager)
                 if (it.state == State.SUCCESS) {

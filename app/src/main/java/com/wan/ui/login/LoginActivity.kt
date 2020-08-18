@@ -1,7 +1,6 @@
 package com.wan.ui.login
 
 import android.app.Activity
-import android.content.DialogInterface
 import android.os.Bundle
 import android.widget.Toast
 import androidx.activity.viewModels
@@ -17,7 +16,7 @@ import kotlinx.android.synthetic.main.login_activity.*
 /**
  * 登录页
  *
- * 当你需要根据用户登录状态来刷新页面时，[com.wan.data.user.UserRepository.getUserLiveData]会在登录与登出后自动更新，所以只需要执行 [startActivity] 方法。
+ * 当你需要根据用户登录状态来刷新页面时，[com.wan.data.user.UserManager.getUserLiveData]会在登录与登出后自动更新，所以只需要执行 [startActivity] 方法。
  *
  * 当你进行某个操作后需要触发登录，并希望登录成功后继续之前的操作时，请使用 [startActivityForResult] 方法。
  */
@@ -60,10 +59,10 @@ class LoginActivity : BaseActivity() {
             if (it.state == State.LOADING) {
                 LoadingDialogFragment.show(
                     supportFragmentManager,
-                    true,
-                    DialogInterface.OnCancelListener {
-                        viewModel.cancelLogin()
-                    })
+                    true
+                ) {
+                    viewModel.cancelLogin()
+                }
                 return@EventObserver
             } else {
                 LoadingDialogFragment.hide(supportFragmentManager)

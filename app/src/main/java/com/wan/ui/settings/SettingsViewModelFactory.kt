@@ -9,7 +9,7 @@ class SettingsViewModelFactory : ViewModelProvider.Factory {
     override fun <T : ViewModel?> create(modelClass: Class<T>): T {
         @Suppress("UNCHECKED_CAST")
         return requireClassIsT(modelClass, SettingsViewModel::class.java) {
-            return SettingsViewModel(UserInjection.provideUserRepository()) as T
+            return SettingsViewModel(UserInjection.provideLogoutRepository()) as T
         }
     }
 }

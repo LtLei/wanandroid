@@ -41,35 +41,28 @@ class SearchFragment : AbsArticlesFragment<SearchViewModel>() {
                 (fragment as SearchFragment).startSearch(keyword)
             } else {
                 fragmentManager.beginTransaction()
-                    .add(containerId, SearchFragment().apply {
-                        arguments = Bundle().apply {
-                            putString(ARG_KEYWORD, keyword)
-                        }
-                    })
-                    .commit()
+                        .add(containerId, SearchFragment().apply {
+                            arguments = Bundle().apply {
+                                putString(ARG_KEYWORD, keyword)
+                            }
+                        })
+                        .commit()
             }
         }
     }
 }
 
 class SearchViewModel(
-    private val articlesRepository: ArticlesRepository
+        private val articlesRepository: ArticlesRepository
 ) : AbsArticlesViewModel(articlesRepository) {
     var keyword: String by Delegates.notNull()
 
-    override val articles: LiveData<Resource<ArticlesResult>>
-        get() = articlesRepository.keywordArticles
-
-    override fun refresh() {
-        viewModelScope.launch {
-            articlesRepository.refreshKeywordArticles(keyword)
-        }
+    override suspend fun refresh(): Resource<ArticlesResult> {
+        return articlesRepository.refreshKeywordArticles(keyword)
     }
 
-    override fun loadMore() {
-        viewModelScope.launch {
-            articlesRepository.loadMoreKeywordArticles(keyword)
-        }
+    override suspend fun _loadMore(): Resource<ArticlesResult> {
+        return articlesRepository.loadMoreKeywordArticles(keyword)
     }
 }
 
@@ -78,7 +71,7 @@ class SearchViewModelFactory : ViewModelProvider.Factory {
     override fun <T : ViewModel?> create(modelClass: Class<T>): T {
         return requireClassIsT(modelClass, SearchViewModel::class.java) {
             SearchViewModel(
-                ArticlesInjection.provideArticlesRepository()
+                    ArticlesInjection.provideArticlesRepository()
             ) as T
         }
     }

@@ -63,6 +63,7 @@ class RetrofitClient private constructor() {
 
     private val apis by lazy { ArrayMap<Class<*>, Any>() }
 
+    @ExperimentalSerializationApi
     @Suppress("UNCHECKED_CAST")
     fun <T> api(clazz: Class<T>): T {
         val cachedService = apis[clazz]

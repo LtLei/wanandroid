@@ -9,7 +9,9 @@ class LoginViewModelFactory : ViewModelProvider.Factory {
     override fun <T : ViewModel?> create(modelClass: Class<T>): T {
         @Suppress("UNCHECKED_CAST")
         return requireClassIsT(modelClass, LoginViewModel::class.java) {
-            LoginViewModel(UserInjection.provideUserRepository()) as T
+            LoginViewModel(
+                UserInjection.provideLoginRepository()
+            ) as T
         }
     }
 }

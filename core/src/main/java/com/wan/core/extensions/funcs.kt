@@ -1,14 +1,10 @@
 package com.wan.core.extensions
 
 import android.net.ParseException
-import androidx.room.RoomDatabase
 import com.wan.core.Resource
 import com.wan.core.constant.*
 import com.wan.core.network.ApiResponse
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.withContext
 import kotlinx.serialization.SerializationException
-import kotlinx.serialization.json.Json
 import org.json.JSONException
 import retrofit2.HttpException
 import timber.log.Timber
@@ -68,18 +64,4 @@ inline fun <T> requireClassIsT(
         throw IllegalArgumentException("not a ${clazz}.")
     }
     return block()
-}
-
-
-@Suppress("DEPRECATION")
-suspend fun <T> RoomDatabase.suspendRunInTransaction(block: suspend () -> T) {
-    withContext(Dispatchers.IO) {
-        beginTransaction()
-        try {
-            block()
-            setTransactionSuccessful()
-        } finally {
-            endTransaction()
-        }
-    }
 }

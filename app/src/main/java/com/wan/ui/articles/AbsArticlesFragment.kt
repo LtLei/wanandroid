@@ -75,7 +75,7 @@ abstract class AbsArticlesFragment<T : AbsArticlesViewModel> :
             setOnItemChildClickListener { _, view, position ->
                 val item = getItem(position)
                 if (view.id == R.id.btn_collect) {
-                    if (!UserManager.isLogin()) {
+                    if (!UserManager.getInstance().isLogin()) {
                         startActivity(Intent(context, LoginActivity::class.java))
                         return@setOnItemChildClickListener
                     }

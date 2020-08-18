@@ -4,8 +4,16 @@ import com.wan.BaseInjection
 import com.wan.db.DbInjection
 
 object UserInjection {
+    fun provideLoginRepository(): LoginRepository {
+        return DefaultLoginRepository(provideUserRepository())
+    }
+
+    fun provideLogoutRepository(): LogoutRepository {
+        return DefaultLogoutRepository(provideUserRepository())
+    }
+
     fun provideUserRepository(): UserRepository {
-        return UserRepositoryImpl.getInstance(
+        return DefaultUserRepository(
             DbInjection.provideUserDao(),
             provideUserService()
         )

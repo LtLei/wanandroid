@@ -5,8 +5,7 @@ import com.wan.db.DbInjection
 
 object ClassifyInjection {
     fun provideClassifyRepository(): ClassifyRepository {
-        return ClassifyRepositoryImpl(
-            DbInjection.provideDb(),
+        return DefaultClassifyRepository(
             DbInjection.provideClassifyDao(),
             provideClassifyService()
         )
@@ -15,5 +14,4 @@ object ClassifyInjection {
     private fun provideClassifyService(): ClassifyService {
         return BaseInjection.provideApi(ClassifyService::class.java)
     }
-
 }
