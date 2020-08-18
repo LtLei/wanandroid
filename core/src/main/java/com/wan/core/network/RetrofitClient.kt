@@ -5,13 +5,11 @@ import com.franmontiel.persistentcookiejar.ClearableCookieJar
 import com.franmontiel.persistentcookiejar.PersistentCookieJar
 import com.franmontiel.persistentcookiejar.cache.SetCookieCache
 import com.franmontiel.persistentcookiejar.persistence.SharedPrefsCookiePersistor
-import com.jakewharton.retrofit2.converter.kotlinx.serialization.asConverterFactory
 import com.wan.BaseInjection
 import com.wan.core.BuildConfig
 import com.wan.core.constant.BASE_URL
-import kotlinx.serialization.UnstableDefault
+import kotlinx.serialization.ExperimentalSerializationApi
 import kotlinx.serialization.json.Json
-import kotlinx.serialization.json.JsonConfiguration
 import okhttp3.MediaType.Companion.toMediaType
 import okhttp3.OkHttpClient
 import okhttp3.logging.HttpLoggingInterceptor
@@ -23,7 +21,6 @@ import java.net.Proxy
 /**
  * the retrofit client.
  */
-@UnstableDefault
 class RetrofitClient private constructor() {
     private val cookieJar: ClearableCookieJar by lazy {
         PersistentCookieJar(
@@ -52,12 +49,14 @@ class RetrofitClient private constructor() {
             .build()
     }
 
+    @ExperimentalSerializationApi
     private val retrofit: Retrofit by lazy {
         val contentType = "application/json".toMediaType()
-        JsonConfiguration.Default
         Retrofit.Builder()
             .baseUrl(BASE_URL)
-            .addConverterFactory(Json(JsonConfiguration(ignoreUnknownKeys = true)).asConverterFactory(contentType))
+            .addConverterFactory(Json {
+                ignoreUnknownKeys = true
+            }.asConverterFactory(contentType))
             .client(okHttpClient)
             .build()
     }

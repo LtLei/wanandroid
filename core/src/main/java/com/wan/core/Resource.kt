@@ -3,12 +3,7 @@ package com.wan.core
 import com.wan.core.constant.SUCCESS_CODE
 import kotlinx.serialization.Serializable
 
-enum class State {
-    LOADING,
-    SUCCESS,
-    EMPTY,
-    ERROR
-}
+
 
 /**
  * 从数据加载来看，只有 加载中，成功，失败，没有数据 几种情况。
