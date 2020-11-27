@@ -3,9 +3,9 @@
 
 # 版本说明
 
-## v1.1预告
+## v1.1
 
-1.1 版本将介绍单元测试与UI测试的作用，敬请期待~
+加入单元测试示例，可以查看文章：[Android上的单元测试与UI测试](https://github.com/LtLei/articles/blob/master/android/the_relearning_of_android/Android%E4%B8%8A%E7%9A%84%E5%8D%95%E5%85%83%E6%B5%8B%E8%AF%95%E4%B8%8EUI%E6%B5%8B%E8%AF%95.md)
 
 ## v1.0.1
 
